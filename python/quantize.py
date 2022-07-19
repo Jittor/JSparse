@@ -30,7 +30,8 @@ def sparse_quantize(indices,
                     voxel_size: Union[float, Tuple[float, ...]] = 1,
                     *,
                     return_index: bool = False,
-                    return_inverse: bool = False) -> List[np.ndarray]:
+                    return_inverse: bool = False,
+                    return_count: bool = False) -> List[np.ndarray]:
     if indices.dtype.is_int() and voxel_size == 1:
         pass
     else:
@@ -41,7 +42,7 @@ def sparse_quantize(indices,
         voxel_size = jt.Var(voxel_size)
         indices = jt.floor(indices / voxel_size).astype(jt.int32)
 
-    _, mapping, inverse_mapping = unique1d(hash(indices, hash_multiplier))
+    _, mapping, inverse_mapping, count = unique1d(hash(indices, hash_multiplier))
     indices = indices[mapping]
 
     outputs = [indices]
@@ -49,6 +50,8 @@ def sparse_quantize(indices,
         outputs += [mapping]
     if return_inverse:
         outputs += [inverse_mapping]
+    if return_count:
+        outputs += [count]
     return outputs[0] if len(outputs) == 1 else outputs
 
 
