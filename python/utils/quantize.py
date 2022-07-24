@@ -4,7 +4,7 @@ from typing import List, Tuple, Union
 import jittor as jt
 import numpy as np
 
-from utils import unique1d
+from .utils import unique1d
 
 __all__ = ['sparse_quantize', 'set_hash']
 
@@ -40,12 +40,13 @@ def sparse_quantize(indices,
         assert isinstance(voxel_size, tuple) and len(voxel_size) == 3
 
         voxel_size = jt.Var(voxel_size)
-        indices = jt.floor(indices / voxel_size).astype(jt.int32)
+        indices[:, 1:] /= voxel_size
+        indices = jt.floor(indices).astype(jt.int32)
 
-    _, mapping, inverse_mapping, count = unique1d(hash(indices, hash_multiplier))
+    hash_num, mapping, inverse_mapping, count = unique1d(hash(indices, hash_multiplier))
     indices = indices[mapping]
 
-    outputs = [indices]
+    outputs = [hash_num, indices]
     if return_index:
         outputs += [mapping]
     if return_inverse:

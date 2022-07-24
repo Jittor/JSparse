@@ -3,7 +3,7 @@ from typing import List, Tuple, Union
 
 import jittor as jt
 
-__all__ = ['make_ntuple', 'set_hash', 'unique1d']
+__all__ = ['make_ntuple', 'trunc', 'unique1d']
 
 def make_ntuple(x: Union[int, List[int], Tuple[int, ...], jt.Var],
                 ndim: int) -> Tuple[int, ...]:
@@ -16,6 +16,12 @@ def make_ntuple(x: Union[int, List[int], Tuple[int, ...], jt.Var],
 
     assert isinstance(x, tuple) and len(x) == ndim, x
     return x
+
+def trunc(x: jt.Var):
+    if x >= 0:
+        return jt.floor(x)
+    else:
+        return jt.ceil(x)
 
 
 def unique1d(var):
