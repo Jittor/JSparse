@@ -270,6 +270,7 @@ def conv3d(
     bias: Optional[jt.Var] = None,
     stride: Union[int, Tuple[int, ...]] = 1,
     dilation: Union[int, Tuple[int, ...]] = 1,
+    group: int = 1,
     transposed: bool = False,
 ) -> SparseTensor:
     # kernel_size = make_ntuple(kernel_size, ndim=3)
@@ -337,10 +338,12 @@ def conv3d(
     if bias is not None:
         output_values += bias
     
+    # size have to be set
     output = SparseTensor(
         indices=output_indices,
         values=output_values,
         stride=output_stride,
+        size=input.size
     )
     output.cmaps = input.cmaps
     output.cmaps.setdefault(output_stride, output_indices)

@@ -24,11 +24,13 @@ class SparseTensor:
         assert (values.ndim == 2)
         # self.indices = indices
         # self.values = values
-        self.shape = size
+        self.size = size
         self.ndim = indices.shape[1] - 1
         self.stride = make_ntuple(stride, ndim=self.ndim)
         self.voxel_size = voxel_size
         self.coalesce_mode = coalesce_mode
+        self.cmaps = {}
+        self.kmaps = {}
 
         ##########################
         # Setup CoordsManager

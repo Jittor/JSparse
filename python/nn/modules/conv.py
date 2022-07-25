@@ -9,7 +9,7 @@ from jittor.misc import _pair, _triple
 
 from python import SparseTensor
 from python.nn import functional as F
-from utils import make_ntuple
+# from utils import make_ntuple
 
 __all__ = ['Conv3d']
 
