@@ -62,7 +62,7 @@ def sphash(indices: jt.Var,
                 #include <iostream>
                 #include <cmath>
                 #include <vector>
-                
+
                 @alias(indices, in0)
                 @alias(offsets, in1)
             """,

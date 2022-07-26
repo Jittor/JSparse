@@ -4,10 +4,10 @@ import jittor as jt
 from jittor import Function
 from jittor.misc import _pair, _triple
 
-from python import SparseTensor
-from python.nn import functional as F
-from python.nn.utils import get_kernel_offsets
-from python import make_ntuple
+from python.jsparse import SparseTensor
+from python.jsparse.nn import functional as F
+from python.jsparse.nn.utils import get_kernel_offsets
+from python.jsparse import make_ntuple
 
 __all__ = ['conv3d', 'Convolution']
 
@@ -319,7 +319,7 @@ def conv3d(
                 nbmaps, nbsizes, (input.indices.shape[0], output_indices.shape[0])
             ]
 
-        output_values = Convolution(
+        output_values = Convolution.apply(
             input.values,
             weight,
             *input.kmaps[(input.stride, kernel_size, stride, dilation)],
@@ -328,7 +328,7 @@ def conv3d(
     else:
         output_stride = tuple(input.stride[k] // stride[k] for k in range(3))
         output_indices = input.cmaps[output_stride]
-        output_values = Convolution(
+        output_values = Convolution.apply(
             input.values,
             weight,
             *input.kmaps[(output_stride, kernel_size, stride, dilation)],

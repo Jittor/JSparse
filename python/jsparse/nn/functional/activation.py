@@ -1,8 +1,8 @@
 import jittor as jt
 import jittor.nn as nn
 
-from python import SparseTensor
-from python.nn.utils import fapply
+from python.jsparse import SparseTensor
+from python.jsparse.nn.utils import fapply
 
 __all__ = ['relu', 'leaky_relu']
 # __all__ = ['relu', 'leaky_relu', 'ReLU', 'LeakyReLU']

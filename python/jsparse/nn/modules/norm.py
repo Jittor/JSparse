@@ -2,8 +2,8 @@ import jittor as jt
 from jittor import nn
 from numpy import kaiser
 
-from python import SparseTensor
-from python.nn.utils import fapply
+from python.jsparse import SparseTensor
+from python.jsparse.nn.utils import fapply
 
 __all__ = ['BatchNorm', 'GroupNorm']
 
