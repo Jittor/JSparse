@@ -3,8 +3,8 @@ from typing import Tuple, Union
 import jittor as jt
 from jittor.misc import _pair, _triple
 
-from python.jsparse.nn.utils import get_kernel_offsets
-from python.jsparse.utils import make_ntuple, trunc
+from JSparse.nn.utils import get_kernel_offsets
+from JSparse.utils import make_ntuple, trunc
 
 __all__ = ['spdownsample']
 

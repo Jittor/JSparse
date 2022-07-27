@@ -5,26 +5,27 @@ import jittor as jt
 from jittor.misc import _pair, _triple
 
 from typing import Any, Dict, Tuple, Union
+from type_check import type_check
 
-from python.jsparse.utils import make_ntuple, sparse_quantize, set_hash
+from JSparse.utils import make_ntuple, sparse_quantize, set_hash
 # from .utils.quantize import sparse_quantize
 # from indice_manager import IndiceManager
 
 class SparseTensor:
 
+    @type_check
     def __init__(
         self, 
         indices: jt.Var, 
         values: jt.Var,
         stride: Union[int, Tuple[int, ...]],
-        size,
+        size=None,
         quantize=True,
         voxel_size=1,
-        coalesce_mode='sum',
+        coalesce_mode:str='sum',
         indice_manager=None,
         device=None,
     ):
-        assert isinstance(indices, jt.Var) and isinstance(values, jt.Var)
         assert (values.ndim == 2)
         # self.indices = indices
         # self.values = values

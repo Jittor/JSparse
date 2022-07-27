@@ -11,12 +11,12 @@ from jittor.misc import _pair, _triple
 from itertools import repeat
 from typing import List, Tuple, Union
 
-from python.jsparse import SparseTensor
-from python.jsparse import PointTensor
-from python.jsparse.utils import make_ntuple
-from python.jsparse.nn import functional as F
-from python.jsparse.nn.utils import get_kernel_offsets
-from python.jsparse.nn.functional import Convolution
+from JSparse import SparseTensor
+from JSparse import PointTensor
+from JSparse.utils import make_ntuple
+from JSparse.nn import functional as F
+from JSparse.nn.utils import get_kernel_offsets
+from JSparse.nn.functional import Convolution
 
 import torchsparse
 from torchsparse import nn as spnn

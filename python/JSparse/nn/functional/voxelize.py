@@ -1,7 +1,7 @@
 import jittor as jt
 from jittor import Function
 
-from python.jsparse import SparseTensor
+from JSparse import SparseTensor
 
 __all__ = ['spvoxelize']
 

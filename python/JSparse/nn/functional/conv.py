@@ -4,10 +4,10 @@ import jittor as jt
 from jittor import Function
 from jittor.misc import _pair, _triple
 
-from python.jsparse import SparseTensor
-from python.jsparse.nn import functional as F
-from python.jsparse.nn.utils import get_kernel_offsets
-from python.jsparse import make_ntuple
+from JSparse import SparseTensor
+from JSparse.nn import functional as F
+from JSparse.nn.utils import get_kernel_offsets
+from JSparse import make_ntuple
 
 __all__ = ['conv3d', 'Convolution']
 

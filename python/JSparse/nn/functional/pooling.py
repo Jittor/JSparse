@@ -1,6 +1,6 @@
 import jittor as jt
 
-from python.jsparse import SparseTensor
+from JSparse import SparseTensor
 
 __all__ = ['global_avg_pool', 'global_max_pool']
 

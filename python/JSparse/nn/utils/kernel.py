@@ -3,7 +3,7 @@ from typing import Tuple, Union
 import numpy as np
 import jittor as jt
 
-from python.jsparse.utils import make_ntuple, trunc
+from JSparse.utils import make_ntuple, trunc
 
 __all__ = ['get_kernel_offsets']
 
