@@ -22,10 +22,12 @@ class Conv3d(nn.Module):
                  dilation: int = 1,
                  groups: int = 1,
                  bias: bool = False,
-                 transposed: bool = False) -> None:
+                 transposed: bool = False,
+                 algorithm: str = "jittor") -> None:
         super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
+        self.algorithm = algorithm
         self.kernel_size = kernel_size if isinstance(kernel_size, tuple) else (kernel_size, kernel_size, kernel_size)
         self.stride = stride if isinstance(stride, tuple) else (stride, stride, stride)
         self.dilation = dilation if isinstance(dilation, tuple) else (dilation, dilation, dilation)
@@ -56,5 +58,6 @@ class Conv3d(nn.Module):
                         stride=self.stride,
                         dilation=self.dilation,
                         groups=self.groups,
-                        transposed=self.transposed)
+                        transposed=self.transposed,
+                        algorithm=self.algorithm)
             

@@ -47,7 +47,7 @@ from sklearn.utils.validation import check_non_negative
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--voxel_size", type=float, default=0.05)
-parser.add_argument("--max_steps", type=int, default=100)
+parser.add_argument("--max_steps", type=int, default=100000)
 parser.add_argument("--val_freq", type=int, default=1000)
 parser.add_argument("--batch_size", default=12, type=int)
 parser.add_argument("--lr", default=1e-1, type=float)
@@ -350,44 +350,42 @@ def train(net, config):
     best_metric = 0
     net.train()
 
-    with jittor.profile_scope(rerun = 10) as report:
-        for i in range(config.max_steps):
-            #optimizer.zero_grad()
-            try:
-                data_dict = next(train_iter)
-            except StopIteration:
-                train_iter = iter(make_data_loader("train", is_minknet, config))
-                data_dict = next(train_iter)
+    for i in range(config.max_steps):
+        #optimizer.zero_grad()
+        try:
+            data_dict = next(train_iter)
+        except StopIteration:
+            train_iter = iter(make_data_loader("train", is_minknet, config))
+            data_dict = next(train_iter)
 
-            input = data_dict["inputs"]
-            logit = net(input)
-            loss = criterion(logit, data_dict["label"])
+        input = data_dict["inputs"]
+        logit = net(input)
+        loss = criterion(logit, data_dict["label"])
 
-            optimizer.step(loss)
-            scheduler.step()
+        optimizer.step(loss)
+        scheduler.step()
 
-            #jittor.sync_all()
-            #jittor.gc()
+        #jittor.sync_all()
+        #jittor.gc()
 
-            if i % config.stat_freq == 0:
-                print(f"Iter: {i}, Loss: {loss.item():.3e}")
+        if i % config.stat_freq == 0:
+            print(f"Iter: {i}, Loss: {loss.item():.3e}")
 
-            if i % config.val_freq == 0 and i > 0:
-                jittor.save(
-                    {
-                        "state_dict": net.state_dict(),
-                        "optimizer": optimizer.state_dict(),
-                        #"scheduler": scheduler.state_dict(),
-                        "curr_iter": i,
-                    },
-                    config.weights,
-                )
-                accuracy = test(net, config, phase="val")
-                if best_metric < accuracy:
-                    best_metric = accuracy
-                print(f"Validation accuracy: {accuracy}. Best accuracy: {best_metric}")
-                net.train()
-        print(report)
+        if i % config.val_freq == 0 and i > 0:
+            jittor.save(
+                {
+                    "state_dict": net.state_dict(),
+                    "optimizer": optimizer.state_dict(),
+                    #"scheduler": scheduler.state_dict(),
+                    "curr_iter": i,
+                },
+                config.weights,
+            )
+            accuracy = test(net, config, phase="val")
+            if best_metric < accuracy:
+                best_metric = accuracy
+            print(f"Validation accuracy: {accuracy}. Best accuracy: {best_metric}")
+            net.train()
 
 
 if __name__ == "__main__":

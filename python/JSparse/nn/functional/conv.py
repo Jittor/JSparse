@@ -109,6 +109,58 @@ class Convolution(Function):
             }
 
             template <typename scalar_t>
+            __global__ void gather_kernel_quick(const int n_k, const int c,
+                                                const scalar_t *in_feat, scalar_t *out_feat,
+                                                const int *nbmaps, const int t) {
+                int i = blockIdx.x, j = threadIdx.x;
+                if (i >= n_k) return;
+                int in_pos = nbmaps[2 * i + t];
+                out_feat[i * c + j] = in_feat[in_pos * c + j];
+            }
+
+            template <typename scalar_t>
+            __global__ void scatter_kernel_quick(const int n_k, const int c,
+                                                 const scalar_t *in_feat, scalar_t *out_feat,
+                                                 const int *nbmaps, const int t) {
+                int i = blockIdx.x, j = threadIdx.x;
+                if (i >= n_k) return;
+                int out_pos = nbmaps[2 * i + 1 - t];
+                out_feat[out_pos * c + j] += in_feat[i * c + j];
+            }
+
+            template <typename scalar_t>
+            void gather(const int n_k, const int c,
+                        const scalar_t *in_feat, scalar_t *out_feat,
+                        const int *nbmaps, const int t) {
+                static int threadNum = 0;
+                if (threadNum == 0) {
+                    cudaDeviceProp prop;
+                    cudaGetDeviceProperties(&prop, 0);
+                    threadNum = prop.maxThreadsPerBlock;
+                }
+                if (c <= threadNum)
+                    gather_kernel_quick <<< n_k, c >>> (n_k, c, in_feat, out_feat, nbmaps, t);
+                else
+                    gather_kernel <<< (n_k * c + threadNum - 1) / threadNum, threadNum >>> (n_k, c, in_feat, out_feat, nbmaps, t);
+            }
+
+            template <typename scalar_t>
+            void scatter(const int n_k, const int c,
+                        const scalar_t *in_feat, scalar_t *out_feat,
+                        const int *nbmaps, const int t) {
+                static int threadNum = 0;
+                if (threadNum == 0) {
+                    cudaDeviceProp prop;
+                    cudaGetDeviceProperties(&prop, 0);
+                    threadNum = prop.maxThreadsPerBlock;
+                }
+                if (c <= threadNum)
+                    scatter_kernel_quick <<< n_k, c >>> (n_k, c, in_feat, out_feat, nbmaps, t);
+                else
+                    scatter_kernel <<< (n_k * c + threadNum - 1) / threadNum, threadNum >>> (n_k, c, in_feat, out_feat, nbmaps, t);
+            }
+
+            template <typename scalar_t>
             cudaDataType getDtype(const scalar_t *ptr) {
                 return std::is_same<scalar_t, jittor::float16>::value ? CUDA_R_16F : CUDA_R_32F;
             }
@@ -230,10 +282,7 @@ class Convolution(Function):
                     }
 
                     // gather
-                    gather_kernel <<< (n_active_feats * n_in_channels + 255) / 256, 256 >>> (
-                            n_active_feats, n_in_channels, 
-                            input_p, in_buffer_activated,
-                            nbmaps_p + cur_offset, t);
+                    gather(n_active_feats, n_in_channels, input_p, in_buffer_activated, nbmaps_p + cur_offset, t);
                     
                     // matmul 
                     // gemm: (o, c) x (c, i) = (o, i)
@@ -247,10 +296,7 @@ class Convolution(Function):
                                 out_buffer_activated, n_out_channels);
 
                     // scatter
-                    scatter_kernel <<< (n_active_feats * n_out_channels + 255) / 256, 256 >>> (
-                            n_active_feats, n_out_channels,
-                            out_buffer_activated, output_p, 
-                            nbmaps_p + cur_offset, t);
+                    scatter(n_active_feats, n_out_channels, out_buffer_activated, output_p, nbmaps_p + cur_offset, t);
 
                     cur_offset += 2 * n_active_feats;
                 }
@@ -329,15 +375,8 @@ class Convolution(Function):
                     if (n_active_feats == 0) continue;
 
                     // gather
-                    gather_kernel <<< (n_active_feats * n_out_channels + 255) / 256, 256 >>> (
-                        n_active_feats, n_out_channels, 
-                        grad_output_p, out_grad_buffer_activated,
-                        nbmaps_p + cur_offset, 1 - t);
-                    
-                    gather_kernel <<< (n_active_feats * n_in_channels + 255) / 256, 256 >>> (
-                        n_active_feats, n_in_channels, 
-                        input_p, in_buffer_activated,
-                        nbmaps_p + cur_offset, t);
+                    gather(n_active_feats, n_out_channels, grad_output_p, out_grad_buffer_activated, nbmaps_p + cur_offset, 1 - t);
+                    gather(n_active_feats, n_in_channels, input_p, in_buffer_activated, nbmaps_p + cur_offset, t);
                     
                     // gemm
                     
@@ -365,10 +404,7 @@ class Convolution(Function):
 
                     // scatter
                     //cudaDeviceSynchronize();
-                    scatter_kernel <<< (n_active_feats * n_in_channels + 255) / 256, 256 >>> (
-                        n_active_feats, n_in_channels,
-                        in_grad_buffer_activated, grad_input_p, 
-                        nbmaps_p + cur_offset, 1 - t);
+                    scatter(n_active_feats, n_in_channels, in_grad_buffer_activated, grad_input_p, nbmaps_p + cur_offset, 1 - t);
 
                     cur_offset += 2 * n_active_feats;
                 }
@@ -392,15 +428,15 @@ def conv3d(
     dilation: Union[int, Tuple[int, ...]] = 1,
     groups: int = 1,
     transposed: bool = False,
-    algorithm: str = "jittor"
+    algorithm: str = "cuda"
 ) -> SparseTensor:
     kernel_size = _triple(kernel_size)
     stride = _triple(stride)
     dilation = _triple(dilation)
 
-    if algorithm == "jittor":
+    if algorithm == "cuda":
         algo = Convolution.apply
-    elif algorithm == "cuda":
+    elif algorithm == "jittor":
         algo = convolution
 
     if (kernel_size == _triple(1) and stride == _triple(1) and dilation == _triple(1)):
