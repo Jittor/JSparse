@@ -109,13 +109,23 @@ model = nn.Sequential(
 
 We finnished two versions of Sparse Convolution(completed convolution function with jittor operators or cuda).
 
-We choose attribute `batch_size = 2, total_len = 10` and run on RTX3080 to test per iteration's speed.
+We choose attribute `batch_size = 2, total_len = 10` and run on RTX3080 to test per iteration's speed (JSparse's version is `v0.5.0` ).
 
-|                   | Jsparse(jittor) | Jsparse(cuda) | Torchsparse(v.1.4.0) |
+|                   | JSparse(jittor) | JSparse(cuda) | TorchSparse(v1.4.0) |
 |-------------------|-----------------|---------------|----------------------|
 | voxel_size = 0.50 | 26.60ms         | 20.05ms       | 33.66ms              |
 | voxel_size = 0.10 | 32.34ms         | 25.15ms       | 40.40ms              |
 | voxel_size = 0.02 | 86.89ms         | 81.37ms       | 87.42ms              |
+
+We also test the same 200 scenes of ScanNet on [VMNet](https://github.com/hzykent/VMNet) on JSparse and TorchSparse.
+
+We choose attribute `batch_size = 3, num_workers=16` and run on RTX Titan and Intel(R) Xeon(R) CPU E5-2678 v3 to test per iteration's speed.
+
+| JSparse(cuda) | TorchSparse(v1.4.0)  |
+|---------------|----------------------|
+| 0.79s         | 0.92s                |
+
+> If we ignore the initiation(`scannet.py`), and just test the speed of network, the speed of JSparse and TorchSparse is similar.
 
 ## Acknowledgements
 
