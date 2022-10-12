@@ -6,7 +6,7 @@ JSparse is a high-performance auto-differentiation library for sparse voxels com
 
 ## Installation
 
-If you use cpu version, you need to install [Google Sparse Hash](https://github.com/sparsehash/sparsehash).
+If you use cpu version, you need to install [Google Sparse Hash](https://github.com/sparsehash/sparsehash), and choose the convolution algorithm with `"jittor"`.
 
 The latest JSparse can be installed by 
 
@@ -74,49 +74,81 @@ You can get the usage of most of the functions and modules from the example `exa
 
 We test several networks between JSparse(v0.5.0) and TorchSparse(v1.4.0).
 
-Because the Jittor framework is fast, inference and training are faster than PyTorch on many operators.
+Because the Jittor framework is fast, inference and training are faster than PyTorch on many operators. We also speed up `quantize` with jittor's operations and get better performance.
 
-For `scatter` and `gather` operations in sparse convolution, we rewrite the operator that adjusts the algorithm strategy according to the number of channels, and achieves better efficiency.
-
-We test the speed on the following model and choose the scenes from ScanNet as well.
+We test the speed on the following model and choose 10 scenes from ScanNet as the dataset.
 
 ```python
+algorithm = "cuda"
+# you can turn it to "jittor"
 model = nn.Sequential(
-    spnn.Conv3d(3, 32, 3),
+    spnn.Conv3d(3, 32, 2),
     spnn.BatchNorm(32),
     spnn.ReLU(),
-    spnn.Conv3d(32, 64, 3, stride=2),
+    spnn.Conv3d(32, 64, 3, stride=1, algorithm=algorithm),
     spnn.BatchNorm(64),
     spnn.ReLU(),
-    spnn.Conv3d(64, 128, 3, stride=2),
+    spnn.Conv3d(64, 128, 3, stride=1, algorithm=algorithm),
     spnn.BatchNorm(128),
     spnn.ReLU(),
-    spnn.Conv3d(128, 256, 3, stride=2),
+    spnn.Conv3d(128, 256, 2, stride=2, algorithm=algorithm),
     spnn.BatchNorm(256),
     spnn.ReLU(),
-    spnn.Conv3d(256, 128, 3, stride=2, transposed=True),
+    spnn.Conv3d(256, 128, 2, stride=2, transposed=True, algorithm=algorithm),
     spnn.BatchNorm(128),
     spnn.ReLU(),
-    spnn.Conv3d(128, 64, 3, stride=2, transposed=True),
+    spnn.Conv3d(128, 64, 3, stride=1, transposed=True, algorithm=algorithm),
     spnn.BatchNorm(64),
     spnn.ReLU(),
-    spnn.Conv3d(64, 32, 3, stride=2, transposed=True),
+    spnn.Conv3d(64, 32, 3, stride=1, transposed=True, algorithm=algorithm),
     spnn.BatchNorm(32),
     spnn.ReLU(),
-    spnn.Conv3d(32, 3, 1),
+    spnn.Conv3d(32, 3, 2),
 )
 ``` 
 
-We finnished two versions of SparseConv(based on jittor operators and based on cuda).
+We finnished two versions of Sparse Convolution(completed convolution function with jittor operators or cuda).
 
-We choose `batch_size = 1, input_size = 1` on RTX3080 to test every iteration's speed.
+We choose attribute `batch_size = 2, total_len = 10` and run on RTX3080 to test per iteration's speed.
 
 |                   | Jsparse(jittor) | Jsparse(cuda) | Torchsparse(v.1.4.0) |
 |-------------------|-----------------|---------------|----------------------|
-| voxel_size = 0.10 | 50.01ms         | 40.02ms       | 47.21ms              |
-| voxel_size = 0.05 | 58.44ms         | 48.01ms       | 50.78ms              |
-| voxel_size = 0.03 | 69.60ms         | 61.37ms       | 53.09ms              |
+| voxel_size = 0.50 | 26.60ms         | 20.05ms       | 33.66ms              |
+| voxel_size = 0.10 | 32.34ms         | 25.15ms       | 40.40ms              |
+| voxel_size = 0.02 | 86.89ms         | 81.37ms       | 87.42ms              |
 
 ## Acknowledgements
 
 The implementation and idea of JSparse refers to many open source libraries, including(but not limited to) [MinkowskiEngine](https://github.com/NVIDIA/MinkowskiEngine) and [TorchSparse](https://github.com/mit-han-lab/torchsparse).
+
+If you use JSparse in your research, please cite our and their works by using the following BibTeX entries:
+
+```bibtex
+@article{hu2020jittor,
+  title={Jittor: a novel deep learning framework with meta-operators and unified graph execution},
+  author={Hu, Shi-Min and Liang, Dun and Yang, Guo-Ye and Yang, Guo-Wei and Zhou, Wen-Yang},
+  journal={Science China Information Sciences},
+  volume={63},
+  number={222103},
+  pages={1--21},
+  year={2020}
+}
+```
+
+```bibtex
+@inproceedings{tang2022torchsparse,
+  title = {{TorchSparse: Efficient Point Cloud Inference Engine}},
+  author = {Tang, Haotian and Liu, Zhijian and Li, Xiuyu and Lin, Yujun and Han, Song},
+  booktitle = {Conference on Machine Learning and Systems (MLSys)},
+  year = {2022}
+}
+```
+
+```bibtex
+@inproceedings{tang2020searching,
+  title = {{Searching Efficient 3D Architectures with Sparse Point-Voxel Convolution}},
+  author = {Tang, Haotian and Liu, Zhijian and Zhao, Shengyu and Lin, Yujun and Lin, Ji and Wang, Hanrui and Han, Song},
+  booktitle = {European Conference on Computer Vision (ECCV)},
+  year = {2020}
+}
+```

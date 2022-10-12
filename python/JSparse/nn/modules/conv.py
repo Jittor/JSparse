@@ -23,7 +23,7 @@ class Conv3d(nn.Module):
                  groups: int = 1,
                  bias: bool = False,
                  transposed: bool = False,
-                 algorithm: str = "jittor") -> None:
+                 algorithm: str = "cuda") -> None:
         super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
