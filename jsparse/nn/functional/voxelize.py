@@ -1,8 +1,8 @@
 import jittor as jt
 from jittor import Function
 
-from JSparse import SparseTensor, PointTensor
-from JSparse.nn import functional as F
+from jsparse import SparseTensor, PointTensor
+from jsparse.nn import functional as F
 
 __all__ = ['spvoxelize', 'point_to_voxel']
 

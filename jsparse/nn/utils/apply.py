@@ -2,7 +2,7 @@ from typing import Callable
 
 import jittor as jt
 
-from JSparse import SparseTensor
+from jsparse import SparseTensor
 
 __all__ = ['fapply']
 

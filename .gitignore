@@ -6,3 +6,8 @@ dist
 *.txt
 *.npy
 *.log
+*.zip
+*.pyc
+data
+run.sh
+tmp

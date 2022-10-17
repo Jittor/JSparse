@@ -2,8 +2,8 @@
 import jittor as jt
 from jittor import nn
 
-from JSparse import SparseTensor
-from JSparse.nn.functional import dropout
+from jsparse import SparseTensor
+from jsparse.nn.functional import dropout
 
 __all__ = ['Linear', 'Dropout']
 

@@ -4,9 +4,9 @@ import numpy as np
 import jittor as jt
 from jittor.misc import _pair, _triple
 
-from JSparse.nn.utils import get_kernel_offsets
-from JSparse.utils import make_ntuple, trunc, unique1d
-from JSparse.nn import functional as F
+from jsparse.nn.utils import get_kernel_offsets
+from jsparse.utils import make_ntuple, trunc, unique1d
+from jsparse.nn import functional as F
 
 __all__ = ['spdownsample']
 

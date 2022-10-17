@@ -3,10 +3,10 @@ import numpy as np
 import jittor as jt
 from jittor import nn
 
-from JSparse import SparseTensor
-from JSparse import nn as spnn
-from JSparse.utils import sparse_quantize
-from JSparse.utils.collate import sparse_collate_fn
+from jsparse import SparseTensor
+from jsparse import nn as spnn
+from jsparse.utils import sparse_quantize
+from jsparse.utils.collate import sparse_collate_fn
 
 from example import RandomDataset
 

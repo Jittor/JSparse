@@ -1,8 +1,8 @@
 import jittor as jt
 import jittor.nn as nn
 
-from JSparse import SparseTensor
-from JSparse.nn.utils import fapply
+from jsparse import SparseTensor
+from jsparse.nn.utils import fapply
 
 __all__ = ['dropout']
 

@@ -3,7 +3,7 @@ from typing import Any, List
 import numpy as np
 import jittor
 
-from JSparse import SparseTensor
+from jsparse import SparseTensor
 
 __all__ = ['sparse_collate', 'sparse_collate_fn']
 

@@ -7,8 +7,8 @@ from jittor import nn
 from jittor import init
 from jittor.misc import _pair, _triple
 
-from JSparse import SparseTensor
-from JSparse.nn import functional as F
+from jsparse import SparseTensor
+from jsparse.nn import functional as F
 
 __all__ = ['Conv3d']
 

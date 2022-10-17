@@ -1,32 +1,12 @@
 import jittor as jt
 from typing import Union, Optional, Tuple
 from jittor.misc import _pair, _triple
+from jittor import nn 
+from jsparse import SparseTensor
+from jsparse.nn import functional as F
+from jsparse.nn.utils import get_kernel_offsets
 
-from JSparse import SparseTensor
-from JSparse.nn import functional as F
-from JSparse.nn.utils import get_kernel_offsets
-
-__all__ = ['global_avg_pool', 'global_max_pool', 'max_pool']
-
-def global_avg_pool(inputs: SparseTensor) -> jt.Var:
-    batch_size = jt.max(inputs.indices[:, 0]).item() + 1
-    outputs = []
-    for k in range(batch_size):
-        input = inputs.values[inputs.indices[:, 0] == k]
-        output = jt.mean(input, dim=0)
-        outputs.append(output)
-    outputs = jt.stack(outputs, dim=0)
-    return outputs
-
-def global_max_pool(inputs: SparseTensor) -> jt.Var:
-    batch_size = jt.max(inputs.indices[:, 0]).item() + 1
-    outputs = []
-    for k in range(batch_size):
-        input = inputs.values[inputs.indices[:, 0] == k]
-        output = jt.max(input, dim=0)
-        outputs.append(output)
-    outputs = jt.stack(outputs, dim=0)
-    return outputs
+__all__ = ['max_pool']
 
 def apply_pool(
     input: jt.Var,
@@ -130,3 +110,5 @@ def max_pool(
     output.cmaps.setdefault(output_stride, output_indices)
     output.kmaps = input.kmaps
     return output
+
+

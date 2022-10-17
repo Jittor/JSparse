@@ -1,9 +1,9 @@
 import jittor as jt
 from jittor import Function
 
-from JSparse import SparseTensor, PointTensor
-from JSparse.nn import functional as F
-from JSparse.nn.utils import get_kernel_offsets
+from jsparse import SparseTensor, PointTensor
+from jsparse.nn import functional as F
+from jsparse.nn.utils import get_kernel_offsets
 
 
 __all__ = ['calc_ti_weights', 'spdevoxelize', 'voxel_to_point']

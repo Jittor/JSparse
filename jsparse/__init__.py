@@ -1,3 +1,3 @@
 from .sparse import *
 from .operators import *
-from .version import __version__
+__version__ = '0.5.0'

@@ -1,7 +1,7 @@
 import jittor as jt
 from jittor import nn
 
-from JSparse.nn.functional import relu, leaky_relu
+from jsparse.nn.functional import relu, leaky_relu
 
 __all__ = ['ReLU', 'LeakyReLU']
 

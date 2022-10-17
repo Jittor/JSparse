@@ -2,11 +2,11 @@ import time
 import jittor as jt
 from jittor import nn
 
-import JSparse 
-from JSparse import SparseTensor
-from JSparse import nn as spnn
-from JSparse.utils import sparse_quantize
-from JSparse.utils.collate import sparse_collate_fn
+import jsparse 
+from jsparse import SparseTensor
+from jsparse import nn as spnn
+from jsparse.utils import sparse_quantize
+from jsparse.utils.collate import sparse_collate_fn
 
 import numpy as np
 

@@ -2,7 +2,7 @@ from typing import List
 
 import jittor as jt
 
-from JSparse import SparseTensor
+from jsparse import SparseTensor
 from numpy import indices
 
 __all__ = ['cat']

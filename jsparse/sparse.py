@@ -6,7 +6,7 @@ from jittor.misc import _pair, _triple
 
 from typing import Any, Dict, Tuple, Union
 
-from JSparse.utils import make_ntuple, sparse_quantize, set_hash
+from jsparse.utils import make_ntuple, sparse_quantize, set_hash
 
 class SparseTensor:
 
