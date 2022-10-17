@@ -21,7 +21,7 @@ python setup.py develop
 ### Architecture
 
 ```
-- JSparse
+- jsparse
     - nn
         - functional
         - modules
@@ -29,7 +29,7 @@ python setup.py develop
         collate/quantize/utils.py
 ```
 
-You can use the modules from `JSparse/modules` .
+You can use the modules from `jsparse/modules` .
 
 ### Sparse Tensor
 
@@ -50,12 +50,12 @@ We can then use `sparse_collate_fn` (provided in `JSparse.utils.collate`) to ass
 
 ### Sparse Neural Network
 
-We finished many common modules in `JSparse.nn` such like `MaxPool`, `GlobalMaxPool`. 
+We finished many common modules in `jsparse.nn` such like `GlobalPool`. 
 
-The neural network interface in JSparse is similar to Jittor:
+The neural network interface in jsparse is similar to Jittor:
 
 ```python
-import JSparse.nn as spnn
+import jsparse.nn as spnn
 def get_conv_block(self, in_channel, out_channel, kernel_size, stride):
     return nn.Sequential(
         spnn.Conv3d(
@@ -111,12 +111,17 @@ model = nn.Sequential(
 We finnished two versions of Sparse Convolution(completed convolution function with jittor operators or cuda).
 
 We choose attribute `batch_size = 2, total_len = 10` and run on RTX3080 to test per iteration's speed (JSparse's version is `v0.5.0` ).
+|                   | JSparse | TorchSparse(v1.4.0) |
+|-------------------|---------------|----------------------|
+| voxel_size = 0.50 | 20.05ms       | 33.66ms              |
+| voxel_size = 0.10 | 25.15ms       | 40.40ms              |
+| voxel_size = 0.02 | 81.37ms       | 87.42ms              |
 
-|                   | JSparse(jittor) | JSparse(cuda) | TorchSparse(v1.4.0) |
+<!-- |                   | JSparse(jittor) | JSparse(cuda) | TorchSparse(v1.4.0) |
 |-------------------|-----------------|---------------|----------------------|
 | voxel_size = 0.50 | 26.60ms         | 20.05ms       | 33.66ms              |
 | voxel_size = 0.10 | 32.34ms         | 25.15ms       | 40.40ms              |
-| voxel_size = 0.02 | 86.89ms         | 81.37ms       | 87.42ms              |
+| voxel_size = 0.02 | 86.89ms         | 81.37ms       | 87.42ms              | -->
 
 We also test the same 200 scenes of ScanNet on [VMNet](https://github.com/hzykent/VMNet) on JSparse and TorchSparse.
 
