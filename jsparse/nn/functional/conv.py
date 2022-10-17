@@ -206,7 +206,8 @@ class Convolution(Function):
 
         assert input.size(1) == weight.size(1)
 
-        self.save_vars = input, weight, nbmaps.numpy(), nbsizes.numpy(), transposed
+        # self.save_vars = input, weight, nbmaps.numpy(), nbsizes.numpy(), transposed
+        self.save_vars = (input, weight, nbmaps, nbsizes, transposed)
         t = 1 if transposed else 0
 
         return jt.code(output_size, input.dtype, [input, weight, nbmaps, nbsizes], 
@@ -314,8 +315,8 @@ class Convolution(Function):
         grad_output: jt.Var
     ):
         input, weight, nbmaps, nbsizes, transposed = self.save_vars
-        nbmaps = jt.array(nbmaps)
-        nbsizes = jt.array(nbsizes)
+        # nbmaps = jt.array(nbmaps)
+        # nbsizes = jt.array(nbsizes)
 
         grad_input, grad_weight = jt.code([input.shape, weight.shape], [input.dtype, weight.dtype], [input, weight, nbmaps, nbsizes, grad_output], 
             cuda_header=self.cuda_header, 

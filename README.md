@@ -12,7 +12,8 @@ The latest JSparse can be installed by
 
 ```bash
 cd python
-python setup.py install
+python setup.py install # or
+python setup.py develop
 ```
 
 ## Getting Started

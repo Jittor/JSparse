@@ -5,7 +5,6 @@ from .count import *
 from .devoxelize import *
 from .downsample import *
 from .hash import *
-from .pooling import *
 from .query import *
 from .voxelize import *
 from .unique import *

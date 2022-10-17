@@ -4,3 +4,4 @@ from .conv import *
 from .norm import *
 from .pooling import *
 from .modules import *
+from .blocks import *

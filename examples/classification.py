@@ -1,4 +1,3 @@
-from ast import arg
 import jittor as jt 
 from jittor import nn
 import numpy as np
@@ -49,6 +48,9 @@ class ModelNet40H5(Dataset):
     ):
         super().__init__(batch_size=batch_size, num_workers=num_workers,shuffle=shuffle)
         assert mode in ['test','train']
+        if not os.path.exists(data_root):
+            import wget 
+            wget.download()
         # download_modelnet40_dataset()
         self.data, self.label = self.load_data(data_root, mode)
         self.transform = transform
@@ -104,17 +106,6 @@ class ModelNet40H5(Dataset):
         labels = np.concatenate(labels,axis=0)        
         tensor = SparseTensor(indices=jt.array(indices), values=jt.array(feats))
         return tensor,labels
-
-class ConvBNReLU(nn.Module):
-    def __init__(self,in_channels,out_channels,kernel_size=3,stride=1):
-        super().__init__()
-        self.conv1 = nn.Sequential(
-            spnn.Conv3d(in_channels,out_channels,kernel_size=kernel_size,stride=stride),
-            spnn.BatchNorm(out_channels),
-            spnn.ReLU()
-        )
-    def execute(self,x):
-        return self.conv1(x)
         
 class VoxelCNN(nn.Module):
     def __init__(self,in_channels,out_channels):
@@ -125,15 +116,15 @@ class VoxelCNN(nn.Module):
             spnn.ReLU()
         )
         self.convs = nn.Sequential(
-            ConvBNReLU(64,128),
-            ConvBNReLU(128,128,kernel_size=2,stride=2),
-            ConvBNReLU(128,256),
-            ConvBNReLU(256,256,kernel_size=2,stride=2),
-            ConvBNReLU(256,512),
-            ConvBNReLU(512,512,kernel_size=2,stride=2),
-            ConvBNReLU(512,1024),
-            ConvBNReLU(1024,1024,kernel_size=2,stride=2),
-            ConvBNReLU(1024,1024)
+            spnn.SparseConvBlock(64,128,kernel_size=3),
+            spnn.SparseConvBlock(128,128,kernel_size=2,stride=2),
+            spnn.SparseConvBlock(128,256,kernel_size=3),
+            spnn.SparseConvBlock(256,256,kernel_size=2,stride=2),
+            spnn.SparseConvBlock(256,512, kernel_size=3),
+            spnn.SparseConvBlock(512,512,kernel_size=2,stride=2),
+            spnn.SparseConvBlock(512,1024,kernel_size=3),
+            spnn.SparseConvBlock(1024,1024,kernel_size=2,stride=2),
+            spnn.SparseConvBlock(1024,1024,kernel_size=3),
         )
         self.global_pool = spnn.GlobalPool(op="max")
 
@@ -191,7 +182,7 @@ def main():
     args = parse_args()
 
     train_loader = ModelNet40H5(
-        data_root="data/modelnet40_ply_hdf5_2048",
+        data_root=args.data_root,
         batch_size=args.batch_size,
         mode='train',
         transform=CoordinateTransformation(),
@@ -199,7 +190,7 @@ def main():
         shuffle=True,
         voxel_size=args.voxel_size)
     test_loader = ModelNet40H5(
-        data_root="data/modelnet40_ply_hdf5_2048",
+        data_root=args.data_root,
         batch_size=args.batch_size,
         mode='test',
         num_workers=args.num_workers,
@@ -212,7 +203,7 @@ def main():
         train(model,train_loader,optimizer)
         scheduler.step()
         acc = test(model,test_loader)
-        print(f"epoch:{epoch},acc:{acc}")
+        print(f"epoch:{epoch},acc:{acc},lr:{optimizer.lr}")
     
 if __name__ == "__main__":
     main()

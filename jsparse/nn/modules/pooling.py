@@ -1,11 +1,4 @@
-from ast import Global
-import jittor as jt
 from jittor import nn
-
-from jsparse import SparseTensor
-from jsparse.nn.functional import max_pool
-
-MaxPool = jt.make_module(max_pool)
 
 class GlobalPool(nn.Module):
     def __init__(self,op="max"):
