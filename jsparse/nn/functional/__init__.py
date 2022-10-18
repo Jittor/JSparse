@@ -9,3 +9,4 @@ from .query import *
 from .voxelize import *
 from .unique import *
 from .functionals import *
+from .sparse_func import *
