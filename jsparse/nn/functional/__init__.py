@@ -10,3 +10,6 @@ from .voxelize import *
 from .unique import *
 from .functionals import *
 from .sparsefunc import *
+from .knn import knn
+from .radius import radius
+from .fps import fps
