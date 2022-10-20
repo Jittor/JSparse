@@ -180,7 +180,7 @@ def main():
     jt.flags.use_cuda = 1
 
     args = parse_args()
-
+    # wget https://shapenet.cs.stanford.edu/media/modelnet40_ply_hdf5_2048.zip and unzip it
     train_loader = ModelNet40H5(
         data_root=args.data_root,
         batch_size=args.batch_size,
