@@ -11,7 +11,6 @@ If you use cpu version, you need to install [Google Sparse Hash](https://github.
 The latest JSparse can be installed by 
 
 ```bash
-cd python
 python setup.py install # or
 python setup.py develop
 ```
