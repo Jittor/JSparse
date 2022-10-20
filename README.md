@@ -79,8 +79,9 @@ Because the Jittor framework is fast, inference and training are faster than PyT
 We test the speed on the following model and choose 10 scenes from ScanNet as the dataset.
 
 ```python
+import jsparse.nn as spnn
+from jittor import nn
 algorithm = "cuda"
-# you can turn it to "jittor"
 model = nn.Sequential(
     spnn.Conv3d(3, 32, 2),
     spnn.BatchNorm(32),
