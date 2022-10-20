@@ -2,7 +2,7 @@
 
 ## Introduction
 
-JSparse is a high-performance auto-differentiation library for sparse voxels computation and point cloud processing based on [TorchSparse](https://github.com/mit-han-lab/torchsparse) and [Jittor](https://github.com/Jittor/jittor).
+JSparse is a high-performance auto-differentiation library for sparse voxels computation and point cloud processing based on [Jittor](https://github.com/Jittor/jittor), [TorchSparse](https://github.com/mit-han-lab/torchsparse) and [Torch Cluster](https://github.com/rusty1s/pytorch_cluster).
 
 ## Installation
 
