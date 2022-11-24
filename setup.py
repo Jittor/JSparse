@@ -18,7 +18,7 @@ setup(
     description="Jittor Sparse Matrix Library",
     url="http://jittor.com",
     python_requires='>=3.7',
-    packages=find_packages(path),
+    packages=find_packages("./" + path),
     install_requires=[
         "jittor",
     ],
